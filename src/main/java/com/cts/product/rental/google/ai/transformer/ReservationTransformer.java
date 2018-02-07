@@ -10,7 +10,7 @@ public class ReservationTransformer {
 
 	public Fulfillment transform(Reservation reservation) {
 		Fulfillment fulfillment = new Fulfillment();
-		fulfillment.setSpeech("Reservation created successfully.");
+		fulfillment.setSpeech("Your Booking is Confirmed and the confirmation number is #" + reservation.getId());
 		fulfillment.setDisplayText("Reservation #" + reservation.getId());
 		
 		AIOutputContext aiOutputContext = new AIOutputContext();

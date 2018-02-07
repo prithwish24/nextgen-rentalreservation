@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,9 +14,10 @@ import com.cts.product.rental.bo.Reservation;
 import com.cts.product.rental.google.ai.bo.Fulfillment;
 import com.cts.product.rental.google.ai.transformer.ReservationTransformer;
 import com.cts.product.rental.service.ReservationService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
-@RequestMapping("/nextgen/apps/rental")
+@RequestMapping("/")
 @ComponentScan(basePackages= {"com.cts.product.rental"})
 public class ReservationController {
 	private static final Logger LOG = LoggerFactory.getLogger(ReservationController.class);
@@ -26,7 +28,7 @@ public class ReservationController {
 	private ReservationTransformer transformer;
 	
 	@RequestMapping(
-			value = "/reservation/lfs", 
+			value = "/lfs", 
 			method = {RequestMethod.GET},
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Fulfillment lowFareSearch() {
@@ -34,16 +36,22 @@ public class ReservationController {
 		return new Fulfillment();
 	}
 
+	@HystrixCommand(fallbackMethod="create_fallback")
 	@RequestMapping(
-			value = "/reservation/create", 
-			method = {RequestMethod.POST, RequestMethod.GET},
+			value = "/create", 
+			method = {RequestMethod.POST},
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public Fulfillment create() {
+	public Fulfillment create(@RequestBody String json) {
+		LOG.info("Request param : " + json);
 		LOG.debug("Entered into create reservation service");
 		Reservation reservation = reservationService.createReservation();
 		Fulfillment fullfillment = transformer.transform(reservation);
 		LOG.debug("Exiting from create reservation service");
 		return fullfillment;
+	}
+	
+	public Fulfillment create_fallback() {
+		return null;
 	}
 	
 }
