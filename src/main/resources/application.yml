@@ -1,11 +1,6 @@
-eureka:
-  instance:
-    hostname: localhost
-    secure-port-enabled: true
-    non-secure-port-enabled: true
-    secure-port: 10234
-    non-secure-port: 8088
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: 
+spring:
+  application:
+    name: reservation-service
+
+server:
+    port: ${PORT:8002}

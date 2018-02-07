@@ -14,7 +14,6 @@ import com.cts.product.rental.bo.Reservation;
 import com.cts.product.rental.google.ai.bo.Fulfillment;
 import com.cts.product.rental.google.ai.transformer.ReservationTransformer;
 import com.cts.product.rental.service.ReservationService;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RestController
 @RequestMapping("/")
@@ -36,7 +35,6 @@ public class ReservationController {
 		return new Fulfillment();
 	}
 
-	@HystrixCommand(fallbackMethod="create_fallback")
 	@RequestMapping(
 			value = "/create", 
 			method = {RequestMethod.POST},
